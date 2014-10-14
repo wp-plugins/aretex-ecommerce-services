@@ -75,10 +75,10 @@ The service includes an integrated *PCI Compliant credit card payment gateway* a
 == Installation ==
 
 # System Requirements #
-php (version)
+
 SSL installed
 Only tested with Apache on Linux
-Required installed php options:
+
 
 # To Install This Plugin #
 
