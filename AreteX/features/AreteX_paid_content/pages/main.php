@@ -1,0 +1,1 @@
+<?php require 'pdcnt_mgm.php'; ?>

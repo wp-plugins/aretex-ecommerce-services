@@ -1,0 +1,123 @@
+<?php
+/**
+ * Need to Add Roles, Capabilities checks etc.
+ * */ 
+
+if (! function_exists('atx_load_sub_menu'))
+{
+    function atx_load_sub_menu($menu_key)
+    {
+         global $wpdb;               
+         $table_name = $wpdb->prefix .'aretex_features';
+         $rows = $wpdb->get_results( "SELECT * FROM $table_name WHERE menu_path='$menu_key' AND load_feature='Y' AND feature_installed='Y'", ARRAY_A  );
+         foreach($rows as $row)
+         {         
+            $parameters = unserialize($row['parameters']);
+            extract($parameters);  
+            $str .= '<li><a onclick="load_feature_screen('."'{$row['feature_name']}'".','."'main'".');" style="font-size: 11px;" href="#">'.$AreteXMenuTitle.'</a>'."\n";
+         }
+         return $str;
+
+    }
+}
+?>
+
+<li ><a style="font-size: 16px;" href="#" onclick="load_screen('welcome');">Getting Started</a>
+    <ul>
+        <li><a href="#" onclick="load_screen('simple_payment_button');"><b>Wizard:</b> Setup a Simple Payment Button</a></li>
+        <li><a href="#"><b>Wizard:</b> Start Simple Delivery</a></li>
+        <li><a href="#"  onclick="load_screen('pay_people_wizards');" ><b>Wizard:</b> Pay Your People</a></li>
+        <li><a href="#"><b>Wizard:</b> Go Live</a></li>
+    </ul>
+</li>
+<li ><a style="font-size: 16px;" href="#">Set Up</a>
+    <ul>            
+        <li><a href="#">Making Payments</a>
+            <ul>
+                <li><a style="font-size: 11px;" href="#">Commission Structures</a></li>
+                <li><a style="font-size: 11px;" href="#" onclick="load_screen('setup_sched');">Payment Schedules</a></li>
+                <li><a style="font-size: 11px;" href="#" onclick="load_screen('payout_codes');">Payout Codes</a></li>                                                                      
+            </ul>
+        </li>
+        <li><a href="#">AreteX&trade;/WP User Roles &amp; Capabilities</a></li>
+        <li><a href="#">Deliverable Codes</a></li>
+        <li><a href="#">Coupons &amp; Tracking</a></li>
+        <li><a href="#">Customization</a>
+            <ul>
+                <li><a style="font-size: 11px;"  onclick="load_screen('customize_receipts');" href="#">Receipt Customization</a></li>
+                <li><a style="font-size: 11px;" onclick="load_screen('payment_form_setup');" href="#">Payment Form Customization</a></li>                                                                                         
+            </ul>
+        </li>                        
+    </ul>
+</li>
+<li><a style="font-size: 16px;" href="#">Bookkeeping</a>
+    <ul>       
+        <li><a href="#">AreteX&trade; Account Management</a></li>
+         <li><a href="#">Payees</a></li>
+        <li><a onclick="load_screen('sales_report');"  href="javascript:void(0);">Sales Reports</a></li> 
+        <li><a href="#">Payout Reports</a></li>                                             
+    </ul>
+</li>
+<li><a style="font-size: 16px;" onclick="load_screen('sales_management');"  href="#">Sales Management</a>
+    <ul>
+        <li><a onclick="load_screen('sales_report');"  href="javascript:void(0);">Sales Reports</a></li>
+        <li><a href="#">Commission Structures</a></li>
+        <li><a href="#">Coupons &amp; Tracking</a></li>  
+        <li><a href="#">Manage Referrers</a></li>                   
+        <li><a href="#">Receipt Customization</a></li>
+    </ul>
+</li>   
+<li><a style="font-size: 16px;"  href="#">Product &amp; Catalog Services</a>
+        <ul>
+            <li><a href="#"  onclick="load_screen('product_delivery');">Product Delivery</a>
+                <ul>
+                    <li><a style="font-size: 11px;" onclick="load_screen('manifests');" href="#">Manifests</a></li>
+                    <li><a style="font-size: 11px;" href="#">Deliverables</a>
+                         <ul>
+                            
+                            <?php $sub = atx_load_sub_menu('Product & Catalog Services/Product Delivery/Deliverables/Authorizations');
+                                  if (! empty($sub))
+                                  {
+                                     echo "<ul>$sub</ul>";
+                                  }  
+                            ?>
+                           
+                         </ul>
+                    </li>
+                </ul>
+            </li>
+            <li><a href="#" onclick="load_screen('products');">Add/Edit Products</a></li> 
+            <li><a href="#">Coupons &amp; Tracking</li>
+            <li><a href="#" onclick="load_screen('payout_codes');">Payout Codes</li>                                                                    
+        </ul>
+</li>
+<li><a style="font-size: 16px;" href="#">Reports</a>
+        <ul>
+            <li><a onclick="load_screen('sales_report');"  href="javascript:void(0);">Sales Report</a></li>
+            <li><a href="#">Payout Report</a></li> 
+            <li><a href="#">Coupon Tracking</a></li>                                                                    
+        </ul>
+</li>
+<li><a style="font-size: 16px;" href="#">Customer Service</a>
+    <ul>
+        <li><a onclick="load_screen('sales_report');"  href="javascript:void(0);">Sales Report</a></li>
+        <li><a href="#">Delivery Logs</a>
+             <ul>
+                <li><a style="font-size: 11px;" href="#">Digital Products</a></li>
+            </ul>
+        </li>                                                                                              
+    </ul>
+</li>
+ <li><a style="font-size: 16px;" href="#">Web Site &amp; Marketing Integration</a>
+    <ul>
+        <li><a href="#">Short Codes</a></li>
+        <li><a href="#">Customizations</a>
+             <ul>
+                <li><a style="font-size: 11px;" href="#">Receipt Customization</a></li>
+                <li><a style="font-size: 11px;" href="#">Payment Form Customization</a></li>                                                                                         
+            </ul>
+        </li>
+        <li><a href="#">Payment Tracking &amp; Reporting (PTR)</a></li>                                                                                                          
+    </ul>
+</li>
+        

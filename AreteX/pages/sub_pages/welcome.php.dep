@@ -1,0 +1,86 @@
+<div class="ui-widget-header ui-corner-top" >
+<h2 style="text-align: center; margin-top: 5px; margin-bottom: 5px;">Welcome</h2>
+</div>
+<div class="ui-widget ui-widget-content  ui-corner-bottom" style="padding: 5px;" >
+    <p>Welcome to AreteX&trade; for WordPress. AreteX&trade; consists of several interconnected systems. 
+    The functions include linked payment flow through a processing gateway (Vantiv is our preferred provider), 
+    automatic commission and royalty payment splits at point-of-sale, 
+    tracking and reporting of purchase and payment history.</p>
+    
+    <p>The links under <strong>Getting Started</strong> are designed to help you get a "quick win" using AreteX&trade; 
+    eCommerce Services.</p>
+    
+    <p>We have provided a sandbox to facilitate your work in building your WordPress eCommerce interface.</p>
+    
+    <p>Be sure to "Go Live" before releasing your site to the public.</p>
+    <hr />
+<h3>Getting Started Wizards</h3>
+<a href="#"  onclick="load_screen('simple_payment_button');" class="icon_center_button ui-button button_link  ui-state-default ui-corner-all">
+
+<img src="<? echo  plugins_url( '../../images/buttons/payment_40.png', __FILE__ ) ?>" /><br />
+Simple Payment<br />
+(Buy Now)
+</a>
+
+<a href="#"  onclick="load_screen('not_yet');" class="icon_center_button ui-button button_link  ui-state-default ui-corner-all">
+
+<img src="<? echo  plugins_url( '../../images/buttons/dispatch_40.png', __FILE__ ) ?>" /><br />
+Simple Delivery<br />
+(Digital)
+</a>
+
+<a href="#"  onclick="load_screen('pay_people_wizards');" class="icon_center_button ui-button button_link  ui-state-default ui-corner-all">
+
+<img src="<? echo  plugins_url( '../../images/buttons/check2_40.png', __FILE__ ) ?>" /><br />
+Pay Your People<br />
+(Direct Deposit)
+</a>
+
+<a href="#"  onclick="load_screen('not_yet');" class="icon_center_button ui-button button_link  ui-state-default ui-corner-all">
+
+<img src="<? echo  plugins_url( '../../images/buttons/bank_transaction_40.png', __FILE__ ) ?>" /><br />
+Going Live<br />
+(How To)
+</a>
+
+
+ <hr />
+    
+</div>
+<script>
+jQuery(document).ready(function() {
+    jQuery(function ($) {
+    // Hover states on the static widgets
+    	$( ".ui-button" ).hover(
+    		function() {
+    			$( this ).addClass( "ui-state-hover" );
+    		},
+    		function() {
+    			$( this ).removeClass( "ui-state-hover" );
+    		}
+    	);
+        
+        $('.icon_center_button').hover(
+            function()
+            {
+                var src = $( this).children('img').attr('src');           
+                src = hover_url(src);        
+                $(this).children('img').attr('src',src);
+                
+                
+            },
+            function()
+            {           
+                var src = $( this).children('img').attr('src');
+                src = off_hover_url(src);
+                $(this).children('img').attr('src',src);
+    
+            }        
+        );
+    });
+    
+    
+  
+  
+ });
+</script>

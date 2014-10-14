@@ -1,0 +1,2 @@
+<strong>Donation:</strong> The donor will be able to enter any amount (1.00 and up) into the credit card form. 
+They will also have the option of donating the same amount each month, either for a certain number of months, or indefinitely. 

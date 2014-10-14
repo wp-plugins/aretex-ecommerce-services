@@ -1,0 +1,110 @@
+.aretex_payment_page {
+background-color:#00bfff
+}
+
+#the_form {
+margin-left:auto;
+margin-right:auto;
+width:600px
+}
+
+#business_brand_info {
+float:none
+}
+
+#biz_info_footer {
+font-style:italic
+}
+
+#biz_name_footer {
+font-weight:700;
+font-family:'Times New Roman', Georgia, Serif
+}
+
+.aretex_payment_form {
+background-color:#EEE;
+padding:10px
+}
+
+.page_background {
+height:100%
+}
+
+.aretex_payment_form h1 {
+color:#000;
+font-size:24px
+}
+
+.aretex_payment_form a {
+color:#003;
+text-decoration:none
+}
+
+.aretex_payment_form th {
+font-weight:700
+}
+
+.submit_button {
+background-color:#A5DBF4;
+text-indent:0;
+border:1px solid #c0dbcd;
+color:#2b332f;
+font-family:Verdana;
+font-size:12px;
+font-weight:700;
+font-style:normal;
+height:30px;
+line-height:30px;
+width:125px;
+text-decoration:none;
+text-align:center;
+text-shadow:1px 1px 0 #c1e6d5
+}
+
+.submit_button:hover {
+background-color:#4B5BDC
+}
+
+.preview {
+    text-decoration: underline; 
+    font-weight: bold;
+    margin-right: 10px;
+    margin-left: 10px;
+    cursor: help; 
+}
+
+.cluetip-default {
+background-color:#ABCCBB;
+color:#fff
+}
+
+.cluetip-default #cluetip-outer {
+margin:0;
+color:#fff;
+font-size:11px;
+background-color:#ABCCBB
+}
+
+.cluetip-default h3#cluetip-title {
+margin:0 0 5px;
+padding:8px 10px 4px;
+font-size:1.1em;
+font-weight:400;
+background-color:#0C5E54;
+color:#fff
+}
+
+.cluetip-default #cluetip-title a {
+color:#0C5E54;
+font-size:.95em
+}
+
+.cluetip-default #cluetip-inner {
+padding:10px
+}
+
+.cluetip-default div#cluetip-close {
+text-align:right;
+margin:0 5px 5px;
+color:#900
+}

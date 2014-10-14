@@ -1,0 +1,4 @@
+<h2>Overview</h2>
+<p>This "Help and Information" section is designed for web designers who build and/or maintain WordPress websites. Because of that, if you are not familiar with phrases like "CSS class" or "element tag," the help and information given here will not necessarily make sense to you. </p>
+<p>The <strong>Payment Form</strong> tab how you (the web designer) can match the "look and feel" of the credit card payment form to your WordPress site.  </p>
+<p>The <strong>CSS Diagrams</strong> tab  illustrate the CSS class usage as well as the major element tags of of the style sheet on the payment form. </p>

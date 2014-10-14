@@ -1,0 +1,1 @@
+<?php require 'mem_mgm.php'; ?>
