@@ -367,7 +367,7 @@ END_POP;
             add_option('aretex_tracking_qvar','atxcc');
             add_option('aretex_tracking_cookie_days','30');
             
-            add_option('aretex_core_path',plugin_dir_path( __FILE__ ));
+            update_option('aretex_core_path',plugin_dir_path( __FILE__ ));
             
             self::add_roles();
             

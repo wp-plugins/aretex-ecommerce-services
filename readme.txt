@@ -131,7 +131,8 @@ In "Sandbox Mode" you will be able to process test transactions via the Vantiv t
 8. Direct marketing tracking (media source) setup screen.
 
 == Changelog ==
-
+= 2.27.01 =
+Changed aretex_core_path from "Add" to "Update" to allow for new updates from beta.
 = 2.27.00 =
 First public release
 = 2.26.00b =

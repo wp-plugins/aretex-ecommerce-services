@@ -3,7 +3,7 @@
  * Plugin Name: AreteX&trade; eCommerce Services
  * Plugin URI: https://aretex.org
  * Description: Connect AreteX&trade; eCommerce Services to your WordPress site.  Receive credit card payments. Automate payouts to contributors and affiliates.  Track marketing. Automate digital delivery: Paid Content, Downloads, Membership and Subscription. Customer account management. Includes 30 Day Free AreteX(tm) "Sandbox" License. You can <a href="https://aretexsaas.com" target="_blank">click here for more information about AreteX&trade;</a>.
- * Version: 2.27.00
+ * Version: 2.27.01
  * Author: 3B Alliance, LLC
  * Author URI: http://3balliance.com
  * License: GPL 2 or Later 
