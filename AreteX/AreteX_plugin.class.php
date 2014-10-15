@@ -264,6 +264,51 @@ END_POP;
                     
             }
         }
+        
+        
+        static protected function reLoadInternalFeatures() {
+            foreach (new DirectoryIterator(plugin_dir_path( __FILE__ ).'features') as $fileInfo) {
+                if($fileInfo->isDot()) continue;
+                    $filename = $fileInfo->getFilename();
+                
+               
+                if (strpos($filename,'.class')) {
+                    $params = self::ParamsFromComments($fileInfo->getPathname());                                     
+                    $feature_name = $params['FeatureName'];
+                    if (empty($feature_name))
+                        continue;
+                        
+                   global $wpdb;                              
+                   $table_name = $wpdb->prefix .'aretex_features';
+                   $rows = $wpdb->get_results( "SELECT * FROM $table_name WHERE feature_name='$feature_name'", ARRAY_A  );
+                   if (empty($rows[0]['feature_name'])) {
+                      $data = array();
+                      $data['feature_name'] = $feature_name;
+                      $data['feature_class'] = $params['FeatureClass'];
+                      $data['description'] = $params['Description'];
+                      $data['feature_path'] = $fileInfo->getPathname();
+                      $data['menu_path']= $params['AreteXMenuPath'];
+                      $data['parameters'] = serialize($params);
+                      $data['load_feature'] = $params['LoadFeature'];
+                      $data['feature_version'] = $params['FeatureVersion'];  
+                      $data['aretex_server_version'] = $params['AretexServerVersion'];
+                      $data['replacement_for'] = $params['ReplacementFor'];                                          
+                      $wpdb->replace( $table_name, $data, null ); 
+                   }
+                   else {
+                        $data = $rows[0];
+                        $data['feature_path'] = $fileInfo->getPathname();
+                        $wpdb->replace( $table_name, $data, null ); 
+                        
+                    }  
+                    
+                }
+                 
+                    
+            }
+        }
+
+        
                 
         
         static protected $updateRequestList;
@@ -370,6 +415,7 @@ END_POP;
             update_option('aretex_core_path',plugin_dir_path( __FILE__ ));
             
             self::add_roles();
+            self::reLoadInternalFeatures();
             
             $hash = get_option('aretex_hash');
             if (! $hash) {
