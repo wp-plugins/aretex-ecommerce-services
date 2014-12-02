@@ -250,7 +250,7 @@ END_SQL;
         
         public static function BuildOptions(){
             $current_user = wp_get_current_user();            
-            $opts['authorization_key'] = $current_user->ID;
+            $opts['authorization_key'] = $current_user->user_login; //$current_user->ID;
             // Clear the cache for this user ... it's all changing
             global $wpdb;                         
             $table_name = $wpdb->prefix .'aretex_pdct_auth_cache';
@@ -619,14 +619,17 @@ END_S;
 
             if (file_exists($aretex_core_path.'AreteX_WPI_DI.class.php')) {                                         
                $wpdb->query("DELETE FROM $table_name WHERE cache_expires <= $now");
-               $wpdb->query("DELETE FROM $table_name WHERE authorization_key='$authorization_key' "); 
                require_once($aretex_core_path.'AreteX_WPI_DI.class.php');
                $response = AreteX_WPI_DI::get_authorization_by_key('paid_content',$authorization_key);              
                $dummy_cache = true;
                if (is_array($response)) {
                     $data = array();               
                     foreach($response as $authorization) {
+                                                                      
                         extract($authorization);
+                          if ($deliverable_code_p != $deliverable_code)
+                            continue;
+                        
                         switch(strtolower($authorization_status)) {
                             case 'authorized':
                             case 'pending':
@@ -641,6 +644,7 @@ END_S;
                                 }
                                 else
                                     $cache_expires = strtotime("+30 Days");
+                              
                             break;
                             default:
                                 $cache_expires = strtotime("+30 Days");
@@ -648,7 +652,10 @@ END_S;
                             break;
                                                             
                         }
-                        if ($deliverable_code_p == $deliverable_code)
+                        
+                        $wpdb->query("DELETE FROM $table_name WHERE  deliverable_code='$deliverable_code_p' AND authorization_key='$authorization_key' "); 
+
+                       
                             $dummy_cache = false;
                         //`authorization_key`, `deliverable_code`, `authorization_status`, `auhtorization_expires`, `cache_expires`, `full_data`
                         $data['authorization_key']     = $authorization_key;
@@ -658,6 +665,7 @@ END_S;
                         $data['cache_expires']         = $cache_expires;
                         $data['full_data']             = serialize($authorization);
                         
+                                            
                         $wpdb->replace( $table_name, $data, null ); 
                     }
                     
@@ -668,8 +676,11 @@ END_S;
                     $data['deliverable_code']      = $deliverable_code_p;
                     $data['authorization_status']  = null; 
                     $data['authorization_expires'] = null;
-                    $data['cache_expires']         = strtotime("+30 Days");;
+                    $data['cache_expires']         = strtotime("+1 minutes");;
                     $data['full_data']             = null;
+                    
+                                          
+                    $wpdb->replace( $table_name, $data, null ); 
                                   
                }
                
@@ -700,7 +711,8 @@ END_S;
               deliverable_code varchar(20) NOT NULL,
             */
             
-            $rows = $wpdb->get_results("SELECT * FROM $table_name WHERE authorization_key='{$current_user->ID}' AND deliverable_code='$deliverable_code' ORDER BY authorization_expires DESC ", ARRAY_A);
+            $rows = $wpdb->get_results("SELECT * FROM $table_name WHERE authorization_key='{$current_user->user_login}' AND deliverable_code='$deliverable_code' ORDER BY authorization_expires DESC ", ARRAY_A);
+          //  error_log("Rows = ".var_export($rows,true));
             $refresh_cache = false;
             if (isset($rows[0]) && is_array($rows[0])) {
                 extract($rows[0]);
@@ -719,8 +731,10 @@ END_S;
             else 
                 $refresh_cache = true;
             
-            if ($refresh_cache)
-                return self::RefeshCache($current_user->ID,$deliverable_code);
+            if ($refresh_cache) {
+             //   error_log("Refereshing Cache $deliverable_code");
+                return self::RefeshCache($current_user->user_login,$deliverable_code);
+            }
             
             return false;
             
@@ -731,6 +745,8 @@ END_S;
         protected static function ProcessShortCodeContent($content) {
             
             $content =  do_shortcode( $content );
+             $t = microtime(true);    
+
             return $content;
             
         }
@@ -750,7 +766,9 @@ END_S;
                  *  
                  ** ***********************/
         	   ), $atts ) );
-               
+           
+           $t = microtime(true);    
+
            $auth = self::CheckUserAuthorization($deliverable_code);
            $auth = strtolower($auth);
            $status = strtolower($status);
@@ -787,7 +805,7 @@ END_S;
                
                if ($process)   
                  return self::ProcessShortCodeContent($content); 
-               
+
                if (strstr($status,'&')) // We should have already processed it...
                   return null; 
            }

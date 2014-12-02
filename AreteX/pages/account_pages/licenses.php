@@ -1,6 +1,8 @@
 <?php 
 
 $license = AreteX_WPI::getBasLicense();
+$version = AreteX_WPI::ServerLicenseVersion();
+$version =  $version['version_number'];
 
 $payment_auth = AreteX_WPI::paymentAuthToken();
 $payment_auth = urlencode($payment_auth);
@@ -52,7 +54,8 @@ $payment_auth = urlencode($payment_auth);
     <?php echo $license->next_payment ?>
     </div> <!-- END Column -->
     <div class="col span_4_of_12"> <!-- Column -->
-    &nbsp;
+        <label>AreteX SaaS Version</label>
+    <?php echo $version; ?>
     <!--
     <label>More Details</label>
     <a href="javascript:void(0);"  

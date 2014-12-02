@@ -17,6 +17,10 @@ if ( ! class_exists( 'AreteX_plugin' ) ) {
      require_once(plugin_dir_path( __FILE__ ) . 'AreteX_WPI.class.php');
     
     class AreteX_plugin {
+        
+        
+        public static $min_server_version = '2.20.00';
+        
         /**
          * AreteX_plugin::__construct()
          * Register the action hooks for the plugin.
@@ -431,8 +435,7 @@ END_POP;
                 $keys = AreteX_API::ClientKeys();                
                 update_option('aretex_public_key',$keys['publickey']);
                 
-                
-                
+                                
                 $password = base64_encode($crypton->generate_sym_key());
                 $ini_code=<<<END_INI_CODE
 ;<? if (; //Cause parse error to hide from prying eyes?>
@@ -448,6 +451,17 @@ END_INI_CODE;
                 $enc_keys = $crypton->get_keys_for_backup();
                 update_option('aretex_private_key',$enc_keys);                                              
             }
+            
+            $version = AreteX_WPI::ServerLicenseVersion(true);
+            error_log(var_export($version,true));
+            if (strcmp($version['version_number'],self::$min_server_version) < 0) {
+                AreteX_WPI::UpdateServerVersion($version['version_number']);
+            }
+            else
+            {
+                error_log("Version Good Enough");
+            }
+            
 
             
 /*            
@@ -715,6 +729,8 @@ END_INI2_CODE;
                 update_option('aretex_private_key',$enc_keys);
                  
             }
+            
+            
             
         }
         
@@ -1412,13 +1428,61 @@ END_STD_FLDS;
             return $ret;
         } 
         
+        
+        protected static function get_user_role() {
+            if ( is_user_logged_in() ) {
+                $user_id = get_current_user_id();
+    	        $user = new WP_User( $user_id );            
+                if ( !empty( $user->roles ) && is_array( $user->roles ) ) {
+            		foreach ( $user->roles as $role ) {
+            		      return $role;
+            		}
+            			
+            	}
+            }
+            
+            return '';
+        }
+        
+        protected static function check_role($in_role,$not_in_role) {
+            $role = self::get_user_role();
+         //   error_log("Role: $role\n".var_export($in_role,true)."\n".var_export($not_in_role,true));
+            if (is_array($in_role)) {
+                if (in_array($role,$in_role)) {
+                    return true;
+                }
+                else
+                    return false;
+            }
+            if (is_array($not_in_role)) {
+                if (! in_array($role,$not_in_role)) {
+                    return true;
+                }
+                else
+                    return false;
+            }
+            return true;
+        }
         public static function buynow($atts,$content=null) {
             extract( shortcode_atts( array(
         		'code' => null,
-        		'id' => '0'
+        		'id' => '0',
+                'in_role' =>null,
+                'not_in_role' => null
         	   ), $atts ) );
                
          //   error_log("Attributes:".var_export($atts,true)."\nContent:$content");
+            
+            if (! empty($in_role)) {
+                $in_role = explode(',',$in_role);
+            }
+            if (! empty($not_in_role)) {
+                $not_in_role = explode(',',$not_in_role);
+            }
+            
+            if (! self::check_role($in_role,$not_in_role)) {
+                return '';
+            }
             
             require_once(plugin_dir_path( __FILE__ ) . 'simple_html_dom.php');
             
@@ -3251,7 +3315,7 @@ END_INI_CODE2;
     }
     
     //  Credit: http://stackoverflow.com/questions/11504541/get-comments-in-a-php-file
-      static protected function ParamsFromComments($filename) {
+      static public function ParamsFromComments($filename) {
         $docComments = array_filter(token_get_all(file_get_contents($filename)), function($entry)
         {
             return $entry[0] == T_DOC_COMMENT;

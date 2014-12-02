@@ -1,4 +1,4 @@
-<div class="ui-widget-content" style="border: none;">
+<div style="border: none;">
 <button onclick="load_main_aretex_content('home');" class="button">Home</button>
 <?php
 if ($license_info->license_status == 'Good' || $license_info->license_status == 'Trial' || $license_info->license_status == 'Advisory'  ) {

@@ -6,7 +6,7 @@
         return false;
     }
 ?>
-<div style="padding: 10px;" > 
+<div style="padding: 10px;" class="outer-wrapper" > 
 
 <h2>AreteX&trade; eCommerce Services</h2>
 <p>Integrate AreteX&trade; eCommerce Services. Receive credit card payments. 

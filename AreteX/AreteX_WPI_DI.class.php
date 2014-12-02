@@ -226,12 +226,13 @@
             $url = get_option('aretex_bas_endpoint');
             $url .= "/api/delivery/authorizations/descriptor/$descriptor/access_key/$key";
             
-           
+        //    error_log($url);
                          
             $creds = self::makeLoginCreds();                      
             extract($creds);
           
             $response = self::rest_get($url,null,$username,$password);
+          //  error_log("URI: $url\nResults: ".var_export($response,true));
             if ($response['response']['code'] == 200) {
                 $response = $response['body'];
                  

@@ -542,3 +542,10 @@ Folding Containers for Product Display
     font-weight: bold;
 }
 
+.outer-wrapper {
+
+	background: url(images/dove.jpg);
+    background-size: 100%;
+    background-repeat: no-repeat;
+
+}

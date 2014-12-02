@@ -1,6 +1,6 @@
 <?php
-include 'Crypt/RSA.php';
-include('Crypt/Rijndael.php');
+require_once dirname(__FILE__).'/Crypt/RSA.php';
+require_once( dirname(__FILE__).'/Crypt/Rijndael.php');
 
 /**
  * Crypton

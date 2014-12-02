@@ -46,6 +46,79 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
             
         }
         
+        public static function ServerLicenseVersion($force=false) {
+            $license_info = self::getBasLicense();
+            if (! is_object($license_info) )
+                return false;
+                
+            
+                
+            $username = get_option('aretex_api_key');
+            $password = get_option('aretex_api_secret');
+            $api_url = get_option('aretex_rest_endpoint');
+            $api_url .= "/version/{$license_info->license_key}";
+            $key = md5($api_url);
+            $result = wp_cache_get( $key );
+            $response = $result;
+            if ( false === $result || $force) {            	        
+                $response = self::rest_get($api_url,array(),$username,$password);
+                
+                if ($response['response']['code'] == 200) {
+                    $response = $response['body'];
+                    
+                    $response = json_decode($response,true);
+                    
+                }
+                
+                wp_cache_set( $key, $response );
+            }
+            
+            return $response;
+        }
+        
+        public static function UpdateServerVersion($current_version) {
+            $license_info = self::getBasLicense();
+            if (! is_object($license_info) )
+                return false;
+                
+        //   error_log("Updating Server Version");     
+            // Upgrade Key: base64(license_key|current_version:signature)
+            $message = $license_info->license_key.'|'.$current_version;
+            $password = self::getEncPw();          
+            $crypton = new Crypton();
+            $keys = $crypton->get_keys('aretex_wp',$password);
+            $private_key = $keys['privatekey'];
+                              
+            $signature = base64_encode($crypton->sign($message,$private_key));                                    
+            $validation = base64_encode($message.':'.$signature);
+            $username = get_option('aretex_api_key');
+            $password = $validation;   
+
+            $api_url = get_option('aretex_rest_endpoint');
+            $api_url .= "/latestversion";
+            
+                        	        
+            $response = self::rest_get($api_url,array(),$username,$password);
+                   //error_log(var_export($response,true));
+            
+            if ($response['response']['code'] == 200) {
+                $response = $response['body'];
+                
+                $response = json_decode($response,true);
+                self::ServerLicenseVersion(true);
+                
+            }
+        //    error_log(var_export($response,true));
+            
+               
+            
+            
+            return $response;
+            
+            
+            
+        }
+        
         protected static function rest_delete($api_url,$body,$username,$password) {
             
             $headers = array( 'Authorization' => 'Basic '.base64_encode("$username:$password") );
@@ -160,10 +233,10 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
                         
             if ($results['response']['code'] == 200) {
                 $response = $results['body'];
-                error_log('response:'.var_export($response,true));
+             //   error_log('response:'.var_export($response,true));
                 $response = json_decode($response,true);
             }
-            error_log('response:'.var_export($response,true));
+          //  error_log('response:'.var_export($response,true));
             return $response;
             
             
@@ -322,11 +395,11 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
            
             $api_url = get_option('aretex_rest_endpoint');
             $api_url .= "/new_public_key/app_key/$app_key/license_key/$license_key";
-            error_log($api_url);            
+            // error_log($api_url);            
             $data['new_public_key'] = $new_public_key;
                       
             $results = self::rest_post($api_url,$data,null,null); 
-            error_log(var_export($results,true));                        
+            // error_log(var_export($results,true));                        
             if ($results['response']['code'] == 200) {
                 $response = $results['body'];
                
@@ -634,6 +707,7 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
         }
         
         public static function cleanCache($all=false) {
+            
             	global $wpdb; 
                 $table_name = $wpdb->prefix .'aretex_cache';
                 
@@ -647,6 +721,10 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
                     
                     
                  $wpdb->query($sql);
+                 
+             // Wish I'd know about wp_cache BEFORE I wrote this cache think... sorry gurus ... learning.'
+             if ($all)
+                wp_cache_flush();
                 
         }
         
@@ -658,13 +736,20 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
             $sql = "DELETE FROM $table_name WHERE  hash_key = '$key'";
                     
             $wpdb->query($sql);
+            
+            wp_cache_delete($key);
                 
         }
         
         
-        protected static function checkCache($key) {
+        public static function checkCache($key) {
                         
             global $wpdb;
+            
+            $data = wp_cache_get($key);
+            if ($data) {            
+                return $data;
+            }
              
             $table_name = $wpdb->prefix .'aretex_cache';
             self::cleanCache();
@@ -679,8 +764,15 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
             
         }
         
-        protected static function cacheData($key,$data,$time_in_minutes=null) {
+        public static function cacheData($key,$data,$time_in_minutes=null) {
             
+            $time = 0;
+            if ($time_in_minutes === null)
+               $time = 4 * 60 * 60; // Four Hours in Seconds           
+            else
+                $time = $time_in_minutes * 60;
+            wp_cache_add($key,$data,null,$time);
+            /*
             global $wpdb;
              
             $table_name = $wpdb->prefix .'aretex_cache';
@@ -698,6 +790,8 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
                 $ins['expires'] = date('Y-m-d H:i:s',strtotime("+$time_in_minutes minute")); 
             
             $wpdb->insert($table_name,$ins );
+            
+            */
         
             
         }
@@ -711,7 +805,11 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
                 extract($creds);
               
                 $response = self::rest_get($uri,array(),$username,$password);
-                if ($response['response']['code'] == 200) {
+                if (! is_array($response)) {
+                   // error_log("Error Response:".var_export($response,true));
+                    return false;
+                }
+                else if ($response['response']['code'] == 200) {
                     $data = $response['body'];
                     
                     self::cacheData($key,$data);
@@ -1077,7 +1175,8 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
               
                 $response = self::rest_get($uri,array(),$username,$password);
                 if (is_wp_error( $response ))
-                {                   
+                {  
+                    error_log("$uri : error\n".var_export($response,true));
                     return false;
                 }
                
@@ -1093,7 +1192,8 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
                         
                                 
                 }
-                else  {                   
+                else  {
+                    error_log("$uri : error".var_export($response,true));
                     $data = false;
                 }                
             }
@@ -1186,7 +1286,7 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
             
         }
         
-        protected static function GetKeys() {
+        public static function GetKeys() {
             $password = self::getEncPw();           
             $crypton = new Crypton();
             $keys = $crypton->get_keys('aretex_wp',$password);
@@ -1205,19 +1305,16 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
             
             if ($tracking_validation->valid) {
                 $public_key = get_option('aretex_central_publickey');
-                list($tracking,$signature) = explode('@',$tracking_validation->validation);
-                // error_log("$public_key");
+                list($tracking,$signature) = explode('@',$tracking_validation->validation);                
                 if ($signature) {
                     if (AreteX_API::Verify($tracking,$signature,$public_key)) {
-                        list($tcode,$norm_code,$lkey,$summary,$ts) = explode('|',$tracking);
-                      //  error_log("$tcode,$norm_code,$lkey,$ts ");
+                        list($tcode,$norm_code,$lkey,$summary,$ts) = explode('|',$tracking);                     
                         if ((time() - $ts) < (24*60*60) ) {
                             if($tcode == $tracking_code) {
                                 $license_key = get_option('aretex_license_key');
                                 if ($lkey == $license_key) {
                                     $summary = json_decode(base64_decode($summary));
-                                    $tracking_validation->summary = $summary;
-                                //    error_log(var_export($tracking_validation,true));
+                                    $tracking_validation->summary = $summary;                                
                                     return $tracking_validation;
                                 }
                             }
@@ -1230,7 +1327,7 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
                 }
                 
             }
-            error_log("Returning False");
+            //error_log("Returning False");
             return false;
             
         }
@@ -1422,7 +1519,12 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
                         
                        $table_name = $wpdb->prefix .'aretex_deliverable_options';
                        $sql = "SELECT feature_class FROM $table_name WHERE deliverable_type='$delivery_type' AND deliverable_descriptor='$descriptor' ";
-                       $rows = $wpdb->get_results($sql,ARRAY_A);
+                       $feature_key = md5($sql);
+                       $rows = self::checkCache($feature_key);
+                       if (! $rows) {
+                            $rows = $wpdb->get_results($sql,ARRAY_A);
+                            self::cacheData($feature_key,$rows);
+                       }
                  //      error_log("Rows".var_export($rows,true));
                        if (! empty($rows[0]['feature_class'])) {
                             $class = $rows[0]['feature_class'];
@@ -1550,7 +1652,15 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
             return $ret;
         }
         
-        
+         protected static function mergeOptions($old_options,$add_options,$deliverable_code) {
+            if (! isset($old_options['deliverable_options']) ) {
+                $old_options['deliverable_options'] = array();
+            }
+            
+            $old_options['deliverable_options'][$deliverable_code] = $add_options;
+            
+            return $old_options;
+         }
         
          public static function SingleProductButtonCode($product,$txn_type=TxnType::sale,$chosen_options=array()) {
             
@@ -1572,10 +1682,11 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
              }
              
              $options = $chosen_options;
+ //            error_log("Sending Options A:".var_export($options,true));
 
              if (is_array($product->details->delivery->deliverables)) {
                 foreach($product->details->delivery->deliverables as $deliverable) {
-                //    error_log("Deliverable: ".var_export($deliverable,true));
+   //                 error_log("Deliverable: ".var_export($deliverable,true));
                     $delivery_type = $deliverable->delivery_type;
                     $descriptor = $deliverable->type_details->descriptor;
                 //    error_log("Delivery Type: $delivery_type - Descriptor: $descriptor");
@@ -1584,14 +1695,20 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
                         
                        $table_name = $wpdb->prefix .'aretex_deliverable_options';
                        $sql = "SELECT feature_class FROM $table_name WHERE deliverable_type='$delivery_type' AND deliverable_descriptor='$descriptor' ";
-                       $rows = $wpdb->get_results($sql,ARRAY_A);
+                       $feature_key = md5($sql);
+                       $rows = self::checkCache($feature_key);
+                       if (! $rows) {
+                            $rows = $wpdb->get_results($sql,ARRAY_A);
+                            self::cacheData($feature_key,$rows);
+                       }
                 //       error_log("Rows".var_export($rows,true));
                        if (! empty($rows[0]['feature_class'])) {
-                            $class = $rows[0]['feature_class'];
+                           $class = $rows[0]['feature_class'];
                            if (method_exists($class,'BuildOptions')) {
                               $del_opts = $class::BuildOptions();
+                              //error_log("Deliverable Options for $class ".var_export($del_opts,true));
                               if (is_array($del_opts)) {
-                                  $options = array_merge($options,$del_opts);
+                                  $options = self::mergeOptions($options,$del_opts,$deliverable->deliverable_code); //array_merge($options,$del_opts);
                               }
                            }
                        }
@@ -1601,7 +1718,7 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
                 }
              }
              
-            
+            // error_log("Sending Options B:".var_export($options,true));
              
             
             
@@ -1625,9 +1742,9 @@ if ( ! class_exists( 'AreteX_WPI' ) ) {
             }
             
             
-             if (empty($options))
+            if (empty($options))
                 $options = null;
-             $button_code = AreteX_API::SimpleBuyNowData($product,$license_key,
+            $button_code = AreteX_API::SimpleBuyNowData($product,$license_key,
                               $app_key,$crypt_keys['privatekey'],$tracking_code,$options,0,'master',$txn_type);
              
              return $button_code;

@@ -116,4 +116,65 @@ function class_cast($destination, $sourceObject)
     return $destination;
 }
 
+
+/**
+ * class_cast
+ *  
+ * Function casting standard object to a specific class
+ *
+ * @param string|object $destination
+ * @param object $sourceObject
+ * @return object
+ */
+ 
+ /**
+ * 
+ * Modified by David Brumbaugh from StackExchange Code
+ * 
+ * License: CC-Attribution: http://creativecommons.org/licenses/by-sa/3.0/
+ * 
+ * Credit: http://stackoverflow.com/questions/3243900/convert-cast-an-stdclass-object-to-another-class
+ * 
+ * This is modifed to cast a child back to a parent, essentially stripping the extra fields from the
+ * sub-class.
+ * 
+ * */
+ 
+function class_cast_2($destination, $sourceObject)
+{
+       
+    if (is_string($destination)) {
+        /*
+        if (! class_exists($destination))
+        {
+            $ar = debug_backtrace();
+            echo "<pre>";
+            var_dump($ar);
+            echo"</pre>";
+            exit();
+        }
+        */
+        $destination = new $destination();
+    }
+
+    $sourceReflection = new ReflectionObject($sourceObject);
+    $destinationReflection = new ReflectionObject($destination);
+    $destinationProperties = $destinationReflection->getProperties();
+    foreach ($destinationProperties as $sourceProperty) {
+        $sourceProperty->setAccessible(true);
+        $name = $sourceProperty->getName();
+        $value = $sourceProperty->getValue($sourceObject);
+        if ($destinationReflection->hasProperty($name)) {
+            $propDest = $destinationReflection->getProperty($name);
+            $propDest->setAccessible(true);
+            $propDest->setValue($destination,$value);
+        } else {
+            $destination->$name = $value;
+        }
+    }
+    return $destination;
+}
+
+
+
 ?>

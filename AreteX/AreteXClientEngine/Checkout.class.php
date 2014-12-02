@@ -31,6 +31,14 @@ class AssignedPricing
             
         $this->item_tax = 0;
    }
+   
+   public function compute_tax($parent_item,$tax_option = null) {
+        if ($tax_option) {
+            $rate = $tax_option->compute_rate($parent_item);
+            $this->item_tax = $rate * $this->item_pay_now;
+        }
+    
+   }
     
     
 }
@@ -59,6 +67,20 @@ class Item
         }
     }
     
+    
+}
+
+class LocalItem extends Item {
+    var $product;
+    public function __construct($qty=1,$product=null,$options=null,$offer='default') {
+        $this->product = $product;
+        parent::__construct($qty,$product,$options,$offer);
+    }
+    
+    public function refreshPrice($offer='default') {
+       $this->item_offer = $offer; 
+       $this->pricing = new AssignedPricing($this->qty,$this->product->details->pricing,$this->item_offer); 
+    }
     
 }
 
@@ -140,7 +162,7 @@ class Cart
     var $total_tax;
     var $total_shipping;
     var $total_due;
-       
+    var $order_number;   
     
     public function __construct()
     {
@@ -163,15 +185,20 @@ class Cart
         $this->items[] = $item;
     }
     
-    public function totalOrder($shipping_option = null)
+    public function totalOrder($shipping_option = null,$tax_option=null)
     {
         $this->item_total = 0.00;
         foreach($this->items as $item)
             $this->item_total += $item->pricing->item_pay_now;
         
         $this->total_tax = 0.00;    
-        foreach($this->items as $item)    
+        foreach($this->items as $item) {
+            if ($tax_option) {
+                $item->compute_tax($item,$tax_option);
+            }
+            
             $this->total_tax += $item->pricing->item_tax;
+        }
             
         $this->total_shipping = 0.00; 
         if (is_object($shipping_option))

@@ -3,7 +3,7 @@ Contributors: 3bcto
 Donate link: http://aretex.org/
 Tags: eCommerce, Paid Content, Membership, Affiliates, Marketplace, Credit Cards, Subscriptions, e-commerce
 Requires at least: 3.8.1
-Tested up to: 4.0
+Tested up to: 4.0.1
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -78,6 +78,7 @@ The service includes an integrated *PCI Compliant credit card payment gateway* a
 
 SSL installed
 Only tested with Apache on Linux
+PHP 5.3 or higher required
 
 
 # To Install This Plugin #
@@ -131,6 +132,14 @@ In "Sandbox Mode" you will be able to process test transactions via the Vantiv t
 8. Direct marketing tracking (media source) setup screen.
 
 == Changelog ==
+= 2.29.00 =
+Automatically updates AreteX server side code to match capablities.
+Fixed conflict when authorizing both paid content and paid subscriptions in the same manifest.
+Added more caching to improve performance. 
+
+= 2.28.00 = 
+Internal version, not released.
+
 = 2.27.02 =
 Update feature paths to allow for new updates from beta.
 
@@ -144,4 +153,5 @@ Final Beta
 Public beta/release candidate.  
 
 == Upgrade Notice ==
-No Upgrade required at this time.
+= 2.29.00 =
+This upgrade is required for the plugin to function properly because of a potential confilict with paid content and paid subsciptions in the same manifest.

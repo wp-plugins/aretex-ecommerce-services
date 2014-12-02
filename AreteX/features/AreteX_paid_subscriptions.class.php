@@ -380,8 +380,10 @@ END_SQL;
         protected static $new_user_set;
         public static function atx_membership_authorization_check($username) {            
             $user_data = self::RefeshCache($username);
+         //   error_log("User Data From Mem Check".var_export($user_data,true));
             
             $auth = self::CheckAuthorization($username);
+         //   error_log("Auth CHeck Returns: ".var_export($auth,true));
             if (! empty($auth)) {
               foreach($auth as $authorization) {
                 if (empty($authorization))
@@ -711,6 +713,7 @@ END_STD_FLDS;
             $registration_options['force_email'] = true;
             $registration_options['authorization_key'] = $registration_options['username']; 
             
+            error_log("Registration Options:".var_export($registration_options,true));
             
             
            // $button_code = AreteX_WPI::SingleProductButtonCode($product_data,TxnType::sale,$registration_options);
@@ -816,7 +819,8 @@ END_STD_FLDS;
                $wpdb->query("DELETE FROM $table_name WHERE user_id='$authorization_key' AND (NOT authorization_status = 'Reserved') "); 
                require_once($aretex_core_path.'AreteX_WPI_DI.class.php');
                // Check with AreteX to see what this user has actually paid for, and what the status of that payment is.
-               $response = AreteX_WPI_DI::get_authorization_by_key('paid_subscriptions',$authorization_key);              
+               $response = AreteX_WPI_DI::get_authorization_by_key('paid_subscriptions',$authorization_key);
+              // error_log("Autonrization Response is: ".var_export($response,true));              
                $dummy_cache = true;
                $cache_expires = 0;
                $role_delivered = '';

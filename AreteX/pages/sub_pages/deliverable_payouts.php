@@ -95,6 +95,9 @@ class="ui-button  icon_left_button button_link  ui-state-default ui-corner-all" 
             if ($payout_code->paid_on == 'Gross') {
                 $name .= "{$payout_code->amount}% Gross";            
             }
+            else if ($payout_code->paid_on == 'Net') {
+                $name .= "{$payout_code->amount}% Net";
+            }
             else {
                 $amount = number_format($payout_code->amount,2);
                 $name .= "$$amount";
@@ -109,6 +112,9 @@ class="ui-button  icon_left_button button_link  ui-state-default ui-corner-all" 
                 
             if ($payout_code->paid_on == 'Gross') {
                 $name = "{$payout_code->amount}% Gross";            
+            }
+            else if ($payout_code->paid_on == 'Net') {
+                $name = "{$payout_code->amount}% Net";
             }
             else {
                 $amount = number_format($payout_code->amount,2);
