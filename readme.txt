@@ -132,6 +132,9 @@ In "Sandbox Mode" you will be able to process test transactions via the Vantiv t
 8. Direct marketing tracking (media source) setup screen.
 
 == Changelog ==
+= 2.29.50 =
+Updated the Sandbox registration page with more information.  Fixed a checkbox location.
+
 = 2.29.00 =
 Automatically updates AreteX server side code to match capablities.
 Fixed conflict when authorizing both paid content and paid subscriptions in the same manifest.

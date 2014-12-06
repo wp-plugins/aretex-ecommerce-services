@@ -6,7 +6,7 @@ if ($res['allow_free'] != 'Yes')
     if ($res['sandbox_message']) {
         $sandbox_message = $res['sandbox_message'];
     }
-    else
+    else 
         $sandbox_message = 'Free Sandbox Accounts are Temporarily Unavialble';
 }
 
@@ -15,7 +15,7 @@ if (! empty($sandbox_message)) {
     $sandbox_message = '<div class="error">'.$sandbox_message.'</div>';
 }
 ?>
-<div style="padding: 10px;" > 
+<div style="padding: 10px;"  class="outer-wrapper" > 
 <h1>AreteX&trade; eCommerce Services Registration</h1>
 <div class="tabs">
 <ul>
@@ -30,10 +30,9 @@ if (! empty($sandbox_message)) {
             <h2 style="text-align: center; margin-top: 5px; margin-bottom: 5px;">Register for  30 Day Free AreteX&trade;  Sandbox Account</h2>
         </div>
         <div class="ui-widget ui-widget-content  ui-corner-bottom"  style="padding: 5px;">
-        <!-- BRUMBAUGH!!! -->
-        <!--
-        <p><a onclick="ajax_have_license();" class="ui-button button">I Have a License Key</a>&nbsp;</p>
-        -->
+        <div style="padding: 4px;">
+        <button onclick="say_why();" class="button">Why Register?</button>  <button onclick="give_feedback();" class="button">Problem or Feedback?</button>
+        </div>
         <?php echo $sandbox_message; ?>
         <hr />
         <p id="plz_wait" style="text-align: center;"></p>
@@ -74,9 +73,9 @@ if (! empty($sandbox_message)) {
                 <legend>Agreement</legend>
                 <div class="section group"> <!-- ROW -->                                     
                     <div class="col span_12_of_12"> <!-- Column -->
-                         <label style="display: inline;">I am a developer, this is for a client.</label><input style="width: 30px;" name="am_developer" value="yes" id="am_developer" type="checkbox" />
-                        <p>I Agree to <a href="http://www.3balliance.com/termsandconditions/" target="_blank">3B Alliance, LLC Terms &amp; Conditions</a> &amp; the <a target="_blank" href="http://3balliance.com/termsandconditions/AreteX%20EULA.pdf">AreteX&trade; EULA</a></p>
-                        <label style="display: inline;">I Agree</label><input style="width: 30px;" class="required" name="i_agree" value="yes" id="i_agree"  type="checkbox" />
+                         <label style="display: inline;">I am a developer, this is for a client.</label><input style="width: 30px;" name="am_developer" value="yes" id="am_developer" type="checkbox" /><br />
+                        <label>I Agree to <a href="http://www.3balliance.com/termsandconditions/" target="_blank">3B Alliance, LLC Terms &amp; Conditions</a> &amp; the <a target="_blank" href="http://3balliance.com/termsandconditions/AreteX%20EULA.pdf">AreteX&trade; EULA</a></label>
+                        <input style="width: 30px;" class="required" name="i_agree" value="yes" id="i_agree"  type="checkbox" />
                     </div> <!-- END Column -->                
                  </div> <!-- END ROW -->
 
@@ -201,6 +200,7 @@ Submit Key Replacement Rquest</a>
     </div>
     </div> <!-- END Column -->    
 </div> <!-- END ROW -->
+
 <script>
 function submit_replace_key()
 {
@@ -242,10 +242,60 @@ function submit_replace_key()
 
 </div>
 </div>
+</div>
+
+<div class="popupdlg" id="whydlg" title="Why Do I Need a Sandbox?">
+<p>
+AreteX is VERY flexible.  The Sandbox environment lets you try this 100% Risk Free (No Credit Card Required) - for 30 days, so you can experiment with what works exactly for your site.
+</p>
+<p>By using AreteX SaaS for your eCommerce Services you recieve <em>effortless PCI Compliance</em>,<em>daily backups</em> and <em>bank level</em> security. </p>
+</div>
+<div class="popupdlg" id="feedbackdlg" title="Feedback - Problem">
+<p>
+We want to do everything we can to provide you with a secure, flexible and cost effective eCommerce solution.
+If you have any questions, suggestions or feedback.  Especially if you have any problems with registration,
+<em><strong>please let us know</strong></em>.  <a href="https://aretex.org/contact/" target="_blank" title="Opens new window">Click here for our contact form</a>. 
+</p>
+
+</div>
+
 <script>
 jQuery(document).ready(function() {
    jQuery('.tabs').tabs();
+   
+    jQuery( ".popupdlg" ).dialog({
+			autoOpen: false,
+			width: 400,
+			buttons: [
+				{
+					text: "OK",
+					click: function() {
+						jQuery( this ).dialog( "close" );
+					}
+				}
+			]
+		});
+   
+   
  });
+ 
+ function say_why() {
+    jQuery( "#whydlg" ).dialog('open');
+    jQuery(".ui-dialog-titlebar-close").hide();
+
+}
+
+ function give_feedback() {
+    jQuery( "#feedbackdlg" ).dialog('open');
+    jQuery(".ui-dialog-titlebar-close").hide();
+
+}
+
+ function problem_dlg() {
+    jQuery( "#whydlg" ).dialog('open');
+    jQuery(".ui-dialog-titlebar-close").hide();
+
+}
 
 </script>
 
