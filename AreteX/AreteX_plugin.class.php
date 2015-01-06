@@ -19,40 +19,98 @@ if ( ! class_exists( 'AreteX_plugin' ) ) {
     class AreteX_plugin {
         
         
-        public static $min_server_version = '2.20.00';
+        public static $min_server_version = '2.21.01';
         
         /**
          * AreteX_plugin::__construct()
          * Register the action hooks for the plugin.
          * @return void
          */
-        public function __construct() {            
-            add_action('plugins_loaded', array( &$this, 'on_load' ), 1 ); 
+        public function __construct() {
             
-            add_action('_user_admin_menu', array( &$this, 'user_menu' ));
-                       
-            add_action('admin_menu', array( &$this, 'admin_menu' ));
-            add_action('admin_enqueue_scripts', array(&$this, 'on_queue_admin_scripts'));
-            add_action('admin_head',array( &$this, 'admin_head' ));
-            add_action('admin_footer', array( &$this, 'ajax_script' ) );
-            add_action('init', array(&$this,'on_init'), 1);                                                 
-            add_action('wp_enqueue_scripts', array(&$this, 'on_queue_scripts')); 
-            // register widget
-            add_action('widgets_init', create_function('', 'return register_widget("AreteXCouponWidget");'));
-            
-            // Short codes in the editor
-           	add_action('media_buttons_context',  array(&$this, 'aretex_editor_button'));
-            add_action( 'admin_footer',  array(&$this, 'add_inline_aretex_popup') );
-                       
-            $this->add_admin_ajax_actions();
-            $this->add_user_ajax_actions();                         
-            $this->add_referral_tracking();                                  
-            $this->add_shortcodes();
-                                   
-            // Add more features ... 
-            self::loadFeatures();
+            if ( $_GET['deactivate_areteX'] == 'true') {
+                add_action( 'admin_init',  'deactivate_areteX', 1);
+            }
+            else {
+                add_action('plugins_loaded', array( &$this, 'on_load' ), 1 ); 
+                
+                add_action('_user_admin_menu', array( &$this, 'user_menu' ));
+                           
+                add_action('admin_menu', array( &$this, 'admin_menu' ));
+                add_action('admin_enqueue_scripts', array(&$this, 'on_queue_admin_scripts'));
+                add_action('admin_head',array( &$this, 'admin_head' ));
+                add_action('admin_footer', array( &$this, 'ajax_script' ) );
+                add_action('init', array(&$this,'on_init'), 1);                                                 
+                add_action('wp_enqueue_scripts', array(&$this, 'on_queue_scripts')); 
+                // register widget
+                add_action('widgets_init', create_function('', 'return register_widget("AreteXCouponWidget");'));
+                
+                // Short codes in the editor
+               	add_action('media_buttons_context',  array(&$this, 'aretex_editor_button'));
+                add_action( 'admin_footer',  array(&$this, 'add_inline_aretex_popup') );
+                           
+                $this->add_admin_ajax_actions();
+                $this->add_user_ajax_actions();                         
+                $this->add_referral_tracking();                                  
+                $this->add_shortcodes();
+                                       
+                // Add more features ... 
+                self::loadFeatures();
+        
+                $this->checkRegistration();
+            }
+
     
         }
+        
+        
+        
+        protected function checkRegistration() {
+            
+            $notify = false;
+            $license_key = get_option('aretex_license_key');
+            if (! empty($license_key)){
+                
+                require_once(plugin_dir_path( __FILE__ ) . 'AreteX_WPI.class.php');
+                $valid_license = AreteX_WPI::validate_license($license_key);
+            }
+            if ($valid_license){
+                $license_info = AreteX_WPI::getBasLicense(); 
+                if (strtolower($license_info->license_status) == 'cancelpending'){
+                                        
+                    $notify = true;
+                }                
+            }
+            else {
+                $notify = true;
+            }
+                
+              
+            if ($notify) {
+                add_action( 'admin_notices',  array('AreteX_plugin','needToRegister') );
+
+            }
+            
+            
+        }
+        
+        public static function needToRegister() {
+            if ( current_user_can( 'activate_plugins' ) ) {
+                
+                    $url = plugins_url( 'images/icon128x128.png', __FILE__ );
+                    $str = '<div style="position: relative; border-style: solid; border-color: black; border-width: 2px; padding: 3px;">'.
+                    "<div style='display: inline;'><img src='{$url}'   /></div><div style='padding: 15px; display: inline-block; vertical-align: top;'> <h3>AreteX&trade; eCommerce Services is Almost Ready</h3>".
+                    'Now you just need a sandbox account to process test payments. '.
+                    '<a href="?page=AreteX_Main_Admin_Menu">Click here to connect to AreteX.</a> </div>'.
+                    '<span style="position: absolute; bottom: 5px; right: 5px;"><a href="?deactivate_areteX=true" title="Dismiss notice and deactivate plugin">X</a></span></div>';
+                    echo $str;
+                
+            }
+        }
+        
+         
+
+
         
         public function aretex_editor_button($context) {
             $current_screen = get_current_screen();

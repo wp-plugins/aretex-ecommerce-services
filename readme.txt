@@ -3,7 +3,7 @@ Contributors: 3bcto
 Donate link: http://aretex.org/
 Tags: eCommerce, Paid Content, Membership, Affiliates, Marketplace, Credit Cards, Subscriptions, e-commerce
 Requires at least: 3.8.1
-Tested up to: 4.0.1
+Tested up to: 4.1
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -14,7 +14,7 @@ Integrated eCommerce gateway for selling content and memberships, auto-pay affil
 # Software as a Service #
 AreteX&trade; is "Software as a Service" that facilitates and manages various eCommerce tasks and processes including one time and recurring payments, delivery of payment status notifications, digital delivery authorizations, automatic calculation and payments of things like commissions, royalties and contributor fees.
 
-This plugin is "Serviceware" that allows you to connect your WordPress site to the AreteX&trade; eCommerce Server. It requires SSL (https://) for secure communication with the AreteX server.  Designed with robust flexibility for the WordPress professional, the plugin provides customer account management, payment tracking and reporting for referrers and contributors, and sales reports. It starts with a 30 Day Free AreteX™ "Sandbox" License, allowing you to test your eCommerce site without the inherent risks of a "real money" environment.
+This plugin is "Serviceware" that allows you to connect your WordPress site to the AreteX&trade; eCommerce Server. It requires SSL (https://) for secure communication with the AreteX server.  Designed with robust flexibility for the WordPress professional, the plugin provides customer account management, payment tracking and reporting for referrers and contributors, and sales reports. It starts with a 30 Day Free AreteX&trade; "Sandbox" License, allowing you to test your eCommerce site without the inherent risks of a "real money" environment.
 
 ## Integrates with Roles and Capabilities ##
 * Use nearly any "membership/role manager" plugin.
@@ -132,6 +132,10 @@ In "Sandbox Mode" you will be able to process test transactions via the Vantiv t
 8. Direct marketing tracking (media source) setup screen.
 
 == Changelog ==
+= 2.30.00 =
+Instruction updates and updates regarding delivery on the server side.
+**Strongly Recommended** update.
+
 = 2.29.50 =
 Updated the Sandbox registration page with more information.  Fixed a checkbox location.
 
@@ -157,4 +161,4 @@ Public beta/release candidate.
 
 == Upgrade Notice ==
 = 2.29.00 =
-This upgrade is required for the plugin to function properly because of a potential confilict with paid content and paid subsciptions in the same manifest.
+This upgrade is required for the plugin to function properly because of a potential confilict with paid content and paid subscriptions in the same manifest.

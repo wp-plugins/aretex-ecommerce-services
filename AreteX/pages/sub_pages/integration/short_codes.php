@@ -7,6 +7,7 @@
 </ul>
 <div id="tabs-1">
 <h2>Shortcodes and Widget</h2>
+<p><em>Note: </em> There are addtional shortcodes and widgets in the <a href="https://wordpress.org/plugins/aretex-shopping-cart/" target="_blank">AreteX shopping cart plugin</a>.</p>
 <p>AreteX&trade; makes extensive use of <a href="http://codex.wordpress.org/Shortcode" target="_blank">WordPress shortcodes</a> to connect your eCommerce services to your web site's front end. </p>
 <div class="section group"> <!-- ROW -->
     <div class="col span_1_of_4"> <!-- Column -->

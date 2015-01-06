@@ -18,6 +18,10 @@
 <br />
 <span style="font-size: 75%;">(Download as PDF)</span>
 </div> <!-- END Column -->
+<div class="col span_1_of_8">
+    <a href="https://wordpress.org/plugins/aretex-shopping-cart/" target="_blank">AreteX Shopping Cart Plugin</a><br />
+    <span style="font-size: 75%;">(Opens a New Window)</span> 
+</div>
 </div> <!-- END ROW --> 
 
 <?php 
